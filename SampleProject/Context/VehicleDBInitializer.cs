@@ -9,7 +9,7 @@ using System.Web;
 
 namespace SampleProject.Context
 {
-    public class VehicleDBInitializer : DropCreateDatabaseAlways<SampleContext>
+    public class VehicleDBInitializer : CreateDatabaseIfNotExists<SampleContext>
     {
         protected override void Seed(SampleContext context)
         {
