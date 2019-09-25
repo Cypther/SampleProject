@@ -1,0 +1,133 @@
+﻿@model SampleProject.Models.VehicleModelView
+<style>
+    .Car {
+        display: block;
+    }
+
+    .Truck {
+        display: none;
+    }
+
+    .Motoercycle {
+        display: none;
+    }
+</style>
+@using (Html.BeginForm("Create", "Vehicle", FormMethod.Post, new { id = "CreateVehicleFormId" }))
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(model => model.VehicleType, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownListFor(model => model.VehicleType, ViewBag.VehicleTypes as List<SelectListItem>, new { @class = "form-control", @Id = "VehicleTypeId" })
+            @Html.ValidationMessageFor(model => model.VehicleType, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group" style="display: none;">
+        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", @Id = "ManufacturerNameId" } })
+            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.VehicleModel, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.VehicleModel, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.VehicleModel, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Color, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Color, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Color, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Year, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Year, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Year, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ManufacturerId, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownListFor(model => model.ManufacturerId, ViewBag.ManufacturerList as List<SelectListItem>, "Please Select", new { @class = "form-control", @Id = "ManufacturerDropDownListId" })
+            @Html.ValidationMessageFor(model => model.ManufacturerId, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="Car form-group">
+        @Html.LabelFor(model => model.TrunkSize, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.TrunkSize, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.TrunkSize, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="Car form-group">
+        @Html.LabelFor(model => model.EngineType, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.EngineType, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.EngineType, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="Truck form-group">
+        @Html.LabelFor(model => model.CargoSize, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.CargoSize, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.CargoSize, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="Truck form-group">
+        @Html.LabelFor(model => model.TowingCapabilities, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.TowingCapabilities, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.TowingCapabilities, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="Motoercycle form-group">
+        @Html.LabelFor(model => model.SaddleHeight, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.SaddleHeight, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.SaddleHeight, "", new { @class = "text-danger" })
+        </div>
+    </div>
+</div>
+}
+
+<script type="text/javascript">
+    $("#VehicleTypeId").on('change', function () {
+        var getValue = parseInt($(this).val());
+        switch (getValue) {
+            case 0:
+                $('.Car').css('display', 'block');
+                $('.Truck').css('display', 'none');
+                $('.Motoercycle').css('display', 'none');
+                break;
+            case 1:
+                $('.Car').css('display', 'none');
+                $('.Truck').css('display', 'block');
+                $('.Motoercycle').css('display', 'none');
+                break;
+            case 2:
+                $('.Car').css('display', 'none');
+                $('.Truck').css('display', 'none');
+                $('.Motoercycle').css('display', 'block');
+        }
+    });
+
+</script>

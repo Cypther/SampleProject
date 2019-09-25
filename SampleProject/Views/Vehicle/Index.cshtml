@@ -1,0 +1,194 @@
+﻿@model IEnumerable<SampleProject.Models.VehicleModelView>
+
+@{
+    ViewBag.Title = "Index";
+}
+<h2>Project Sample</h2>
+
+<style>
+    table thead {
+        color: #fff;
+        background-color: #2D7FB8;
+    }
+
+    .Requester {
+        color: blue;
+        font-weight: bolder;
+    }
+
+    input {
+        color: black;
+    }
+</style>
+
+<button id="AddNewVehicleButtonId" type="button">Add New Vehicle</button>
+
+<div class="row sectionWell" style="overflow-x:auto;">
+    <hr class="SectionLine">
+    <div class="col-md-12">
+        <br />
+        <table class="table" id="VehicleTableId">
+            <thead>
+                <tr>
+                    <th class="searchable">Name</th>
+                    <th class="searchable">Model</th>
+                    <th class="searchable">Color</th>
+                    <th class="searchable">Year</th>
+                    <th class="searchable">VehicleType</th>
+                    <th class="searchable">EngineType</th>
+                    <th class="searchable">TrunkSize</th>
+                    <th class="searchable">CargoSize</th>
+                    <th class="searchable">TowingCapabilities</th>
+                    <th class="searchable">SaddleHeight</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal modal-flex fade in" id="VehicleModalId" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" aria-labelledby="VehicleModalLabelId" aria-hidden="false" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="VehicleModalLabelId">Add New Vehicle</h4>
+            </div>
+            <div class="modal-body" id="VehicleModalBody">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="DismissLocation">Close</button>
+                <button type="button" class="btn btn-green" id="SaveButtonId">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script>
+        $(document).ready(function () {
+
+            $('.searchable').each(function () {
+                var title = $(this).text().trim();
+                $(this).html('<span style="display: none">' + title + '</span><input class="searchable-header" data-toggle="tooltip" data-placement="top" type="text" placeholder="' + title + '" title="' + title + '" style="width: 100%" />');
+            });
+
+            var VehicleTableId = $('#VehicleTableId').DataTable({
+                //"scrollX": true,
+                "lengthMenu": [[25, 50, 100, 1000], [25, 50, 100, 1000]],
+                rowId: "DocumentID",
+                "autoWidth": false,
+                dom: 'Brtipl',
+                processing: true,
+                "select": {
+                    "style": "os"
+                },
+                'language': {
+                    processing: "Loading..."
+                },
+                "columnDefs": [
+                    { "width": "80px", "type": "date", "targets": 0 },
+                    { "width": "80px", "targets": 1 },
+                    { "width": "80px", "targets": 2 },
+                    { "width": "80px", "targets": 3 }
+                ],
+                ajax: {
+                    url: "@Url.Action("GetAllVehicles", "Vehicle")",
+                    type: "POST",
+                    data: function (d) {
+                    }
+                },
+                columns: [
+                    {
+                        data: "Name"
+                    },
+                    {
+                        data: "VehicleModel"
+                    },
+                    {
+                        data: "Color"
+                    },
+                    {
+                        data: "Year"
+                    },
+                    {
+                        data: "VehicleType"
+                    },
+                    {
+                        data: "EngineType"
+                    },
+                    {
+                        data: "TrunkSize"
+                    },
+                    {
+                        data: "CargoSize"
+                    },
+                    {
+                        data: "TowingCapabilities"
+                    },
+                    {
+                        data: "SaddleHeight"
+                    }
+                ]
+            });
+
+            VehicleTableId.columns().every(function () {
+                var that = this;
+                $('input', this.header()).on('keyup change', function () {
+                    if (that.search() !== this.value) {
+                        that.search(this.value).draw();
+                    }
+                });
+            });
+
+
+            $("#AddNewVehicleButtonId").click(function (e) {
+                e.preventDefault(); 
+                $.ajax({
+                    url: "@Url.Action("Create", "Vehicle")",
+                    type: 'GET',
+                    success: function (data) {
+                        $("#VehicleModalBody").html(data);
+                        $("#VehicleModalId").modal("show");
+                    }
+                });
+            });
+
+            $("#SaveButtonId").click(function () {
+
+                var ManufacturerName = $("#ManufacturerDropDownListId option:selected").text();
+                $('#ManufacturerNameId').val(ManufacturerName);
+ 
+                $("#CreateVehicleFormId").unbind('submit').bind('submit', function (e) {
+                    e.preventDefault();
+                    var CreateVehicleForm = $("#CreateVehicleFormId")[0];
+                    $.ajax({
+                        url: CreateVehicleForm.action,
+                        type: CreateVehicleForm.method,
+                        data: $(CreateVehicleForm).serialize(),
+                        success: function (result) {
+                            if (result.errors == null) {
+                                $("#VehicleModalBody").html("");
+                                $("#VehicleModalId").modal("hide");
+                                VehicleTableId.ajax.reload();
+                            } else {
+                                $(".field-validation-valid").text("");
+                                $("#CreateVehicleFormId .form-group").removeClass("has-error");
+                                for (var i = 0; i < result.errors.length; ++i) {
+                                    var errorAttribute = result.errors[i]["Key"];
+                                    var errorMessage = result.errors[i]["Value"];
+                                    $('#CreateVehicleFormId [data-valmsg-for="' + errorAttribute + '"]').closest(".form-group").addClass("has-error");
+                                    $('#CreateVehicleFormId [data-valmsg-for="' + errorAttribute + '"]').text(errorMessage);
+                                }
+                            }
+                        }
+                    });
+                });
+                $("#CreateVehicleFormId").submit();
+            });
+
+
+    });
+
+</script>
