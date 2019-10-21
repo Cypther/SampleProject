@@ -11,6 +11,9 @@ using System.Web.Mvc;
 
 namespace SampleProject.Controllers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class VehicleController : Controller
     {
         private readonly VehicleService _vehicleService;
