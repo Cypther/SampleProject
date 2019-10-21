@@ -1,4 +1,5 @@
-﻿using SampleProject.Models;
+﻿using SampleProject.Migrations;
+using SampleProject.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -12,8 +13,9 @@ namespace SampleProject.Context
 
         public SampleContext() : base("SampleContext")
         {
-            Database.SetInitializer(new VehicleDBInitializer());
-        }
+            //Database.SetInitializer(new VehicleDBInitializer());
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<SampleContext, Configuration>());
+        }  
 
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<Manufacturer> Manufacturers { get; set; }

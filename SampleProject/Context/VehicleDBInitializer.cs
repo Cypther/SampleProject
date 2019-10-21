@@ -1,4 +1,5 @@
 ﻿using SampleProject.Helpers;
+using SampleProject.Migrations;
 using SampleProject.Models;
 using SampleProject.Models.EntityModel;
 using System;
